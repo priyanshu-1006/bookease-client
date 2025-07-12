@@ -21,7 +21,7 @@ const Booking = () => {
       const dateStr = selectedDate.toISOString().split('T')[0];
 
       try {
-        const res = await fetch(`http://localhost:5000/api/bookings/slots/${dateStr}`);
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/bookings/slots/${dateStr}`);
         const data = await res.json();
         setBookedSlots(data.booked || []);
       } catch (err) {
@@ -48,34 +48,72 @@ const Booking = () => {
     const dateStr = selectedDate.toISOString().split('T')[0];
 
     try {
-      const res = await fetch('http://localhost:5000/api/bookings', {
+      // Step 1: Create Razorpay Order
+      const orderRes = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/payment/create-order`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ date: dateStr, time: selectedTime }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: 500 }),
       });
 
-      const data = await res.json();
+      const orderData = await orderRes.json();
 
-      if (!res.ok) {
-        toast.error(data.error || 'Booking failed');
-      } else {
-        toast.success('✅ Booking Confirmed!');
-        setSelectedTime('');
-        setBookedSlots([...bookedSlots, selectedTime]);
-      }
+      // Step 2: Razorpay Checkout
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: 500 * 100,
+        currency: 'INR',
+        name: 'BookEase',
+        description: `Slot Booking on ${dateStr} at ${selectedTime}`,
+        order_id: orderData.orderId,
+        handler: async function (response) {
+          // Step 3: Verify payment
+          const verifyRes = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/payment/verify`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(response),
+          });
+
+          const verifyData = await verifyRes.json();
+
+          if (verifyData.success) {
+            // Step 4: Book slot
+            const bookingRes = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/bookings`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ date: dateStr, time: selectedTime }),
+            });
+
+            const bookingData = await bookingRes.json();
+
+            if (!bookingRes.ok) {
+              toast.error(bookingData.error || 'Booking failed');
+            } else {
+              toast.success('✅ Booking Confirmed!');
+              setSelectedTime('');
+              setBookedSlots([...bookedSlots, selectedTime]);
+            }
+          } else {
+            toast.error('Payment verification failed!');
+          }
+        },
+        theme: {
+          color: '#6366F1',
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
     } catch (err) {
-      console.error('Booking error:', err);
-      toast.error('Server error while booking');
+      console.error('Payment error:', err);
+      toast.error('Something went wrong during payment');
     }
   };
 
   return (
     <div className="min-h-screen relative flex items-center justify-center py-10 px-4 bg-gradient-to-br from-indigo-200 via-blue-100 to-pink-200 overflow-hidden">
-      
-
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -161,10 +199,11 @@ const Booking = () => {
             onClick={handleBooking}
             className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-full transition duration-300"
           >
-            Confirm Booking
+            Pay & Book ₹500
           </button>
         </motion.div>
-      <StarsBackground />
+
+        <StarsBackground />
       </motion.div>
     </div>
   );
