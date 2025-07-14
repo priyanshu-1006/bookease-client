@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
-import Particles from '@tsparticles/react';
-import { loadLinksPreset } from '@tsparticles/preset-links';
+import Particles from 'react-tsparticles';
+import { loadLinksPreset } from 'tsparticles-preset-links';
 
 const ParticlesBackground = () => {
   const particlesInit = useCallback(async (engine) => {
@@ -14,7 +14,7 @@ const ParticlesBackground = () => {
       options={{
         preset: 'links',
         background: {
-          color: '#0d47a1', // You can customize this if needed
+          color: '#0d47a1',
         },
         fullScreen: {
           enable: true,

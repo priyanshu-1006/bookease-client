@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
-import Particles from '@tsparticles/react';
-import { loadLinksPreset } from '@tsparticles/preset-links';
+import Particles from 'react-tsparticles';
+import { loadLinksPreset } from 'tsparticles-preset-links';
 
 const StarsBackground = () => {
   const particlesInit = useCallback(async (engine) => {
@@ -14,7 +14,7 @@ const StarsBackground = () => {
       options={{
         preset: 'links',
         background: {
-          color: '#000000', // you can change this to match your theme
+          color: '#000000',
         },
         fullScreen: {
           enable: true,
