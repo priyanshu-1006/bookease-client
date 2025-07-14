@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import StarsBackground from '../components/StarsBackground'; // ✅ Add background like Home
+import StarsBackground from '../components/StarsBackground';
+
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://bookease-server.onrender.com';
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -23,9 +25,10 @@ const Profile = () => {
       }
 
       try {
-        const res = await fetch('http://localhost:5000/api/users/profile', {
+        const res = await fetch(`${BASE_URL}/api/users/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+
         const data = await res.json();
 
         if (!res.ok) {
@@ -61,7 +64,7 @@ const Profile = () => {
 
   const handleUpdate = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/users/profile', {
+      const res = await fetch(`${BASE_URL}/api/users/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -71,6 +74,7 @@ const Profile = () => {
       });
 
       const data = await res.json();
+
       if (!res.ok) {
         alert(data.message || data.error || 'Update failed');
       } else {
@@ -85,7 +89,7 @@ const Profile = () => {
 
   return (
     <div className="relative min-h-screen overflow-hidden">
-       {/* 🌌 Same background as Home */}
+      <StarsBackground />
 
       <div className="relative z-10 max-w-4xl mx-auto py-10 px-4">
         <div className="bg-white/10 backdrop-blur-md border border-white/30 rounded-2xl shadow-xl p-8">
@@ -208,10 +212,8 @@ const Profile = () => {
             </>
           )}
         </div>
-        <StarsBackground />
       </div>
     </div>
-    
   );
 };
 

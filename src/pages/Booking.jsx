@@ -4,16 +4,34 @@ import 'react-calendar/dist/Calendar.css';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import StarsBackground from '../components/StarsBackground';
+import { useNavigate } from 'react-router-dom';
 
 const Booking = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState('');
   const [bookedSlots, setBookedSlots] = useState([]);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [user, setUser] = useState(null);
+
+  const navigate = useNavigate();
 
   const timeSlots = [
     '09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
     '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM',
   ];
+
+  const token = localStorage.getItem('token');
+
+  useEffect(() => {
+    if (token) {
+      fetch(`${import.meta.env.VITE_API_BASE_URL}/api/users/profile`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+        .then((res) => res.json())
+        .then((data) => setUser(data.user))
+        .catch((err) => console.error('User fetch error:', err));
+    }
+  }, [token]);
 
   useEffect(() => {
     const fetchBookedSlots = async () => {
@@ -39,7 +57,6 @@ const Booking = () => {
       return;
     }
 
-    const token = localStorage.getItem('token');
     if (!token) {
       toast.error('Please login to book a slot');
       return;
@@ -52,7 +69,7 @@ const Booking = () => {
       const orderRes = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/payment/create-order`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ amount: 500 }),
+        body: JSON.stringify({ amount: 1 }),
       });
 
       const orderData = await orderRes.json();
@@ -60,7 +77,7 @@ const Booking = () => {
       // Step 2: Razorpay Checkout
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-        amount: 500 * 100,
+        amount: 1 * 100,
         currency: 'INR',
         name: 'BookEase',
         description: `Slot Booking on ${dateStr} at ${selectedTime}`,
@@ -94,14 +111,26 @@ const Booking = () => {
               toast.success('✅ Booking Confirmed!');
               setSelectedTime('');
               setBookedSlots([...bookedSlots, selectedTime]);
+              setShowSuccess(true);
+
+              setTimeout(() => {
+                setShowSuccess(false);
+                navigate('/booking-success', {
+                  state: {
+                    name: user?.name,
+                    email: user?.email,
+                    date: dateStr,
+                    time: selectedTime,
+                    paymentId: response.razorpay_payment_id,
+                  },
+                });
+              }, 1500);
             }
           } else {
             toast.error('Payment verification failed!');
           }
         },
-        theme: {
-          color: '#6366F1',
-        },
+        theme: { color: '#6366F1' },
       };
 
       const rzp = new window.Razorpay(options);
@@ -113,16 +142,16 @@ const Booking = () => {
   };
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center py-10 px-4 bg-gradient-to-br from-indigo-200 via-blue-100 to-pink-200 overflow-hidden">
+    <div className="min-h-screen relative flex items-center justify-center py-10 px-4 bg-black overflow-hidden">
+      <StarsBackground />
+
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="z-10 w-full max-w-5xl bg-white/20 backdrop-blur-xl border border-white/30 rounded-2xl shadow-2xl p-8"
+        className="z-10 w-full max-w-5xl bg-white/10 backdrop-blur-xl border border-white/30 rounded-2xl shadow-2xl p-8 text-white"
       >
-        <h2 className="text-3xl font-bold text-center text-gray-800 mb-8">
-          Book Your Appointment
-        </h2>
+        <h2 className="text-3xl font-bold text-center mb-8">Book Your Appointment</h2>
 
         <div className="flex flex-col md:flex-row gap-10 items-start">
           {/* Calendar */}
@@ -131,7 +160,7 @@ const Booking = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
-            className="flex-1 bg-white rounded-xl shadow p-4"
+            className="flex-1 bg-white/5 rounded-xl shadow p-4"
           >
             <Calendar
               onChange={setSelectedDate}
@@ -143,7 +172,7 @@ const Booking = () => {
 
           {/* Time Slots */}
           <div className="flex-1">
-            <h3 className="text-lg font-semibold mb-4 text-gray-800">
+            <h3 className="text-lg font-semibold mb-4">
               {selectedDate
                 ? `Available Slots on ${selectedDate.toDateString()}`
                 : 'Select a date first'}
@@ -197,14 +226,28 @@ const Booking = () => {
         >
           <button
             onClick={handleBooking}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-full transition duration-300"
+            className="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-8 py-3 rounded-full transition duration-300"
           >
-            Pay & Book ₹500
+            Pay & Book ₹1
           </button>
         </motion.div>
-
-        <StarsBackground />
       </motion.div>
+
+      {/* ✅ Success Modal */}
+      <AnimatePresence>
+        {showSuccess && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="absolute top-10 w-full flex justify-center z-50"
+          >
+            <div className="bg-green-600 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-3 animate-bounce">
+              <span className="text-2xl">✅</span> Booking Confirmed!
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

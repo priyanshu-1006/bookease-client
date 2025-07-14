@@ -27,6 +27,8 @@ const carouselSlides = [
   },
 ];
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://bookease-server.onrender.com';
+
 const Signup = () => {
   const navigate = useNavigate();
   const [current, setCurrent] = useState(0);
@@ -55,7 +57,7 @@ const Signup = () => {
     setSuccessMsg('');
 
     try {
-      const res = await fetch('http://localhost:5000/api/auth/signup', {
+      const res = await fetch(`${BASE_URL}/api/auth/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
@@ -79,8 +81,6 @@ const Signup = () => {
 
   return (
     <div className="min-h-screen flex bg-black relative overflow-hidden">
-      
-
       {/* LEFT: Carousel */}
       <div className="w-1/2 hidden md:flex items-center justify-center p-8">
         <AnimatePresence mode="wait">
@@ -197,7 +197,8 @@ const Signup = () => {
               Login
             </span>
           </p>
-        <StarsBackground />
+
+          <StarsBackground />
         </div>
       </div>
     </div>

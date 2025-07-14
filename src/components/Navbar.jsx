@@ -3,6 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 
+// ✅ Optional: use environment variable if defined
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://bookease-server.onrender.com';
+
 const Navbar = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -14,19 +17,22 @@ const Navbar = () => {
       if (!token) return;
 
       try {
-        const res = await fetch('http://localhost:5000/api/users/profile', {
-          headers: { Authorization: `Bearer ${token}` },
+        const res = await fetch(`${BASE_URL}/api/users/profile`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
 
         const data = await res.json();
+
         if (res.ok && data.user) {
           setUser(data.user);
           localStorage.setItem('user', JSON.stringify(data.user));
         } else {
-          console.error('Failed to fetch user:', data.error);
+          console.warn('Failed to fetch user:', data.error);
         }
       } catch (err) {
-        console.error('Error fetching user for navbar:', err);
+        console.error('❌ Error fetching user:', err.message);
       }
     };
 
@@ -52,7 +58,10 @@ const Navbar = () => {
   return (
     <nav className="sticky top-0 z-50 bg-slate-900/30 backdrop-blur-lg shadow-md border-b border-white/10">
       <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-        <Link to="/" className="text-4xl font-['Fredoka'] font-semibold text-amber-50 tracking-wide">
+        <Link
+          to="/"
+          className="text-4xl font-['Fredoka'] font-semibold text-amber-50 tracking-wide"
+        >
           Book<span className="text-pink-500">Ease</span>
         </Link>
 
@@ -61,7 +70,6 @@ const Navbar = () => {
             Home
           </Link>
 
-          {/* Handle Book Conditional Access */}
           <button
             onClick={handleBookClick}
             className="hover:text-blue-300 transition duration-200"

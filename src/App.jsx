@@ -9,7 +9,8 @@ import AdminPanel from './pages/AdminPanel';
 import ProtectedRoute from './components/ProtectedRoute';
 import Footer from './components/Footer';
 import { Toaster } from 'react-hot-toast';
-import StarsBackground from './components/StarsBackground'; // ✅ new import
+import StarsBackground from './components/StarsBackground';
+import BookingSuccess from './pages/BookingSuccess'; // ✅ New page import
 import 'react-calendar/dist/Calendar.css';
 
 function App() {
@@ -27,14 +28,19 @@ function App() {
             <AdminPanel />
           </ProtectedRoute>
         } />
-        <Route path="/Booking" element={
+        <Route path="/booking" element={
           <ProtectedRoute>
             <Booking />
           </ProtectedRoute>
         } />
-        <Route path="/Profile" element={
+        <Route path="/profile" element={
           <ProtectedRoute>
             <Profile />
+          </ProtectedRoute>
+        } />
+        <Route path="/booking-success" element={
+          <ProtectedRoute>
+            <BookingSuccess /> {/* ✅ Success page route */}
           </ProtectedRoute>
         } />
       </Routes>

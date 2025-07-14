@@ -27,6 +27,9 @@ const carouselSlides = [
   },
 ];
 
+// ✅ Use env var or fallback to Render URL
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://bookease-server.onrender.com';
+
 const Login = () => {
   const navigate = useNavigate();
   const [current, setCurrent] = useState(0);
@@ -46,7 +49,7 @@ const Login = () => {
     setErrorMsg('');
 
     try {
-      const res = await fetch('http://localhost:5000/api/auth/login', {
+      const res = await fetch(`${BASE_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -61,6 +64,7 @@ const Login = () => {
       localStorage.setItem('token', data.token);
       navigate('/profile');
     } catch (err) {
+      console.error('Login error:', err);
       setErrorMsg('Something went wrong. Please try again.');
     }
   };
