@@ -65,7 +65,6 @@ const Booking = () => {
     const dateStr = selectedDate.toISOString().split('T')[0];
 
     try {
-      // Step 1: Create Razorpay Order
       const orderRes = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/payment/create-order`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -74,7 +73,6 @@ const Booking = () => {
 
       const orderData = await orderRes.json();
 
-      // Step 2: Razorpay Checkout
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
         amount: 1 * 100,
@@ -83,7 +81,6 @@ const Booking = () => {
         description: `Slot Booking on ${dateStr} at ${selectedTime}`,
         order_id: orderData.orderId,
         handler: async function (response) {
-          // Step 3: Verify payment
           const verifyRes = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/payment/verify`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -93,7 +90,6 @@ const Booking = () => {
           const verifyData = await verifyRes.json();
 
           if (verifyData.success) {
-            // Step 4: Book slot
             const bookingRes = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/bookings`, {
               method: 'POST',
               headers: {
@@ -160,13 +156,50 @@ const Booking = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
-            className="flex-1 bg-white/5 rounded-xl shadow p-4"
+            className="flex-1 bg-white/10 backdrop-blur-md rounded-xl shadow p-4 border border-white/20 text-white"
           >
+            {/* Dark calendar styles injected inline */}
+            <style>{`
+              .react-calendar {
+                background-color: rgba(255, 255, 255, 0.05);
+                color: white;
+                border-radius: 0.75rem;
+                padding: 1rem;
+              }
+              .react-calendar__navigation button {
+                color: white;
+                background: none;
+                font-weight: bold;
+              }
+              .react-calendar__month-view__weekdays {
+                text-transform: uppercase;
+                font-weight: 600;
+                color: rgba(255, 255, 255, 0.6);
+              }
+              .react-calendar__tile {
+                background: transparent;
+                color: white;
+                border-radius: 0.5rem;
+                transition: background 0.3s;
+              }
+              .react-calendar__tile:hover {
+                background: rgba(255, 255, 255, 0.1);
+              }
+              .react-calendar__tile--now {
+                background: rgba(99, 102, 241, 0.5);
+                color: white;
+              }
+              .react-calendar__tile--active {
+                background: #6366f1 !important;
+                color: white !important;
+              }
+            `}</style>
+
             <Calendar
               onChange={setSelectedDate}
               value={selectedDate}
               minDate={new Date()}
-              className="w-full rounded-lg"
+              className="w-full"
             />
           </motion.div>
 
