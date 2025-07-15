@@ -1,11 +1,10 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
 import StarsBackground from '../components/StarsBackground';
 import { useNavigate } from 'react-router-dom';
-import confetti from 'canvas-confetti';
 
 const Booking = () => {
   const [selectedDate, setSelectedDate] = useState(null);
@@ -14,7 +13,6 @@ const Booking = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
-  const timeSlotRef = useRef(null);
 
   const timeSlots = [
     '09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
@@ -50,12 +48,6 @@ const Booking = () => {
     };
 
     fetchBookedSlots();
-  }, [selectedDate]);
-
-  useEffect(() => {
-    if (selectedDate && timeSlotRef.current) {
-      timeSlotRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
   }, [selectedDate]);
 
   const handleBooking = async () => {
@@ -115,7 +107,7 @@ const Booking = () => {
               setSelectedTime('');
               setBookedSlots([...bookedSlots, selectedTime]);
               setShowSuccess(true);
-              confetti();
+
               setTimeout(() => {
                 setShowSuccess(false);
                 navigate('/booking-success', {
@@ -157,6 +149,7 @@ const Booking = () => {
         <h2 className="text-3xl font-bold text-center mb-8">Book Your Appointment</h2>
 
         <div className="flex flex-col md:flex-row gap-10 items-start">
+          {/* Calendar */}
           <motion.div
             key={selectedDate?.toISOString() || 'calendar'}
             initial={{ opacity: 0, scale: 0.95 }}
@@ -209,7 +202,8 @@ const Booking = () => {
             />
           </motion.div>
 
-          <div className="flex-1" ref={timeSlotRef}>
+          {/* Time Slots */}
+          <div className="flex-1">
             <h3 className="text-lg font-semibold mb-4">
               {selectedDate
                 ? `Available Slots on ${selectedDate.toDateString()}`
@@ -236,13 +230,14 @@ const Booking = () => {
                         key={slot}
                         onClick={() => !isBooked && setSelectedTime(slot)}
                         disabled={isBooked}
-                        className={`py-2 px-3 rounded-lg text-sm font-medium transition border transform hover:scale-105 hover:shadow-lg duration-200 ease-in-out ${
+                        className={`py-2 px-3 rounded-lg text-sm font-medium transition border ${
                           isBooked
                             ? 'bg-red-200 text-red-700 cursor-not-allowed'
                             : isSelected
                             ? 'bg-blue-600 text-white border-blue-600'
                             : 'bg-gray-100 text-gray-900 hover:bg-blue-100'
                         }`}
+                        whileTap={{ scale: 0.95 }}
                       >
                         {slot}
                       </motion.button>
@@ -254,6 +249,7 @@ const Booking = () => {
           </div>
         </div>
 
+        {/* Confirm Button */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -269,6 +265,7 @@ const Booking = () => {
         </motion.div>
       </motion.div>
 
+      {/* ✅ Success Modal */}
       <AnimatePresence>
         {showSuccess && (
           <motion.div
