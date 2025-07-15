@@ -1,61 +1,158 @@
-# BookEase 📅✨  
-A modern full-stack appointment booking application with secure login, availability tracking, and Razorpay payment integration.
 
-![Banner](https://user-images.githubusercontent.com/000000/your-banner-link.png) <!-- Optional: Add a nice banner or screenshot -->
+# 📖 BookEase - Appointment Booking System
 
----
+BookEase is a full-stack web application that enables businesses or professionals to manage their appointments online. It offers seamless booking, availability tracking, user authentication, admin management, and optional Razorpay payment integration.
 
-## 🚀 Live Demo
+## 🔗 Live Links
 
-- 🔗 Frontend: [https://bookease-client.vercel.app](https://bookease-client.vercel.app)  
-- 🔗 Backend: [https://bookease-server.onrender.com](https://bookease-server.onrender.com)
+- 🌐 Client: [bookease.vercel.app](https://bookease.vercel.app)
+- 🛠️ Server: [bookease-server.onrender.com](https://bookease-server.onrender.com)
 
----
+## 📸 Screenshots
 
-## 📦 Tech Stack
+### 🖥️ Landing Page
+![Landing Page](screenshots/landing.png)
 
-**Frontend:**
-- React + Vite
-- Tailwind CSS
-- Framer Motion (animations)
-- Heroicons
-- React Router DOM
-- Razorpay Integration
+### 🔐 Signup Page
+![Signup](screenshots/signup.png)
 
-**Backend:**
-- Node.js + Express
-- PostgreSQL (via pg)
-- JWT Auth
-- Razorpay SDK
-- Hosted on Render
+### 🔓 Login Page
+![Login](screenshots/login.png)
 
----
+### 📅 Booking Calendar
+![Booking](screenshots/booking.png)
 
-## ✅ Features
+### 👤 Profile Dashboard
+![Profile](screenshots/profile.png)
 
-- 🔐 JWT-based user signup/login
-- 📅 Calendar with time slot booking
-- 📊 Admin panel to view bookings
-- 💳 Razorpay payment gateway
-- 🌈 Fully responsive, animated UI
-- 🌌 Starry animated background
+### 🛡️ Admin Panel
+![Admin Panel](screenshots/admin.png)
 
 ---
 
-## 🛠️ Installation
+## 🚀 Features
 
-### 1. Clone the Repos
+### 🧑‍💼 For Users:
+- Signup/Login using JWT authentication
+- Book available time slots using calendar UI
+- View your past and upcoming bookings
+- Dark mode UI with animated visuals
+- Payment via Razorpay with confirmation
+
+### 🛠️ For Admins:
+- View all user bookings
+- Monitor system activity
+- Manage availability
+- Export and track appointment data
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend:
+- ⚛️ React.js + Vite
+- 💨 TailwindCSS
+- 🧭 React Router DOM
+- ✨ Framer Motion (Animations)
+- 🔥 React Hot Toast (Notifications)
+- 📆 react-calendar
+
+### Backend:
+- 🧠 Node.js + Express.js
+- 🐘 PostgreSQL (Database)
+- 🔐 JWT for Authentication
+- 🧾 Razorpay Integration (Payments)
+- 📦 dotenv, bcrypt, cors
+
+---
+
+## 📁 Folder Structure
+
+### `/client`
+- React UI components and pages
+- Responsive and animated design
+- Razorpay integration and calendar booking
+
+### `/server`
+- REST API routes: `/auth`, `/bookings`, `/admin`
+- PostgreSQL with pooled connection
+- Middleware for auth and error handling
+
+---
+
+## ⚙️ Setup Instructions
+
+### 1. Clone the repositories
 
 ```bash
-git clone https://github.com/priyanshu-1006/bookease-client.git
-git clone https://github.com/priyanshu-1006/bookease-server.git
+git clone https://github.com/priyanshu-1006/bookease
+git clone https://github.com/priyanshu-1006/bookease-server
 
 
-🧑‍💻 Author
+2. Install dependencies
+
+Client:
+
+cd bookease
+npm install
+
+Server:
+
+cd bookease-server
+npm install
+
+3. Create .env in /server
+
+PORT=5000
+DB_HOST=your_postgres_host
+DB_USER=your_postgres_user
+DB_PASSWORD=your_password
+DB_NAME=your_database
+DB_PORT=5432
+JWT_SECRET=your_jwt_secret
+RAZORPAY_KEY_ID=your_key_id
+RAZORPAY_KEY_SECRET=your_key_secret
+
+4. Run the app
+
+# In client
+npm run dev
+
+# In server
+npm start
+
+
+---
+
+📦 Deployment
+
+Client: Deployed on Vercel
+
+Server: Deployed on Render
+
+
+
+---
+
+📄 License
+
+MIT License
+
+
+---
+
+🙋‍♂️ Author
+
 Priyanshu Chaurasia
-GitHub | LinkedIn'
+🔗 LinkedIn
+📧 priyanshuchaurasia.business@gmail.com
 
 
+---
+
+🌟 Show your Support
+
+If you like this project, don't forget to ⭐ the repo and share it with others!
 
 Folder Structure
 
