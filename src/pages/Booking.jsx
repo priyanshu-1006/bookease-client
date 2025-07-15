@@ -12,7 +12,6 @@ const Booking = () => {
   const [bookedSlots, setBookedSlots] = useState([]);
   const [showSuccess, setShowSuccess] = useState(false);
   const [user, setUser] = useState(null);
-
   const navigate = useNavigate();
 
   const timeSlots = [
@@ -75,7 +74,7 @@ const Booking = () => {
 
       const options = {
         key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-        amount: 1 * 100,
+        amount: 100,
         currency: 'INR',
         name: 'BookEase',
         description: `Slot Booking on ${dateStr} at ${selectedTime}`,
@@ -156,45 +155,45 @@ const Booking = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
-            className="flex-1 bg-white/10 backdrop-blur-md rounded-xl shadow p-4 border border-white/20 text-white"
+            className="flex-1 bg-white/5 rounded-xl shadow p-4 border border-white/20"
           >
-            {/* Dark calendar styles injected inline */}
             <style>{`
               .react-calendar {
-                background-color: rgba(255, 255, 255, 0.05);
-                color: white;
+                background-color: rgba(31, 41, 55, 0.9);
                 border-radius: 0.75rem;
+                color: white;
                 padding: 1rem;
+                border: none;
               }
               .react-calendar__navigation button {
                 color: white;
-                background: none;
                 font-weight: bold;
+                background: none;
               }
               .react-calendar__month-view__weekdays {
                 text-transform: uppercase;
-                font-weight: 600;
+                font-weight: 500;
+                font-size: 0.75rem;
                 color: rgba(255, 255, 255, 0.6);
               }
               .react-calendar__tile {
-                background: transparent;
+                background: none;
                 color: white;
                 border-radius: 0.5rem;
-                transition: background 0.3s;
-              }
-              .react-calendar__tile:hover {
-                background: rgba(255, 255, 255, 0.1);
+                padding: 0.5rem 0;
+                transition: background 0.3s ease;
               }
               .react-calendar__tile--now {
-                background: rgba(99, 102, 241, 0.5);
-                color: white;
+                background: rgba(99, 102, 241, 0.3);
               }
               .react-calendar__tile--active {
                 background: #6366f1 !important;
                 color: white !important;
               }
+              .react-calendar__tile:hover {
+                background-color: rgba(255, 255, 255, 0.1);
+              }
             `}</style>
-
             <Calendar
               onChange={setSelectedDate}
               value={selectedDate}
@@ -231,12 +230,12 @@ const Booking = () => {
                         key={slot}
                         onClick={() => !isBooked && setSelectedTime(slot)}
                         disabled={isBooked}
-                        className={`py-2 px-3 rounded-lg border text-sm font-medium transition ${
+                        className={`py-2 px-3 rounded-lg text-sm font-medium transition border ${
                           isBooked
                             ? 'bg-red-200 text-red-700 cursor-not-allowed'
                             : isSelected
                             ? 'bg-blue-600 text-white border-blue-600'
-                            : 'bg-white text-gray-700 hover:bg-blue-100'
+                            : 'bg-gray-100 text-gray-900 hover:bg-blue-100'
                         }`}
                         whileTap={{ scale: 0.95 }}
                       >
