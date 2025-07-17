@@ -16,7 +16,8 @@ const AdminPanel = () => {
     }
 
     try {
-      const res = await fetch('http://localhost:5000/api/admin/bookings', {
+      const res = await fetch('https://bookease-server.onrender.com/api/admin/bookings', {
+
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -46,7 +47,8 @@ const AdminPanel = () => {
   const token = localStorage.getItem('token');
 
   try {
-    const res = await fetch(`http://localhost:5000/api/admin/bookings/${id}`, {
+    const res = await fetch(`https://bookease-server.onrender.com/api/admin/bookings/${id}`, {
+
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token}`,
